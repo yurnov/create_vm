@@ -18,8 +18,8 @@ VCPU=1
 OS_VAR=ubuntu16.04
 USERNAME=jin
 #assuming that id_rsa.pub generated alredy
-#to be updated
-SSH_KEY=`cat /home/$USERNAME/.ssh/id_rsa.pub`	
+#need to be updated to check and generate key if missed
+readonly SSH_KEY=$(cat "~${USERNAME}/.ssh/id_rsa.pub")	
 IP_ADD_BASE=192.168.122.1
 BASE_DIR=/var/lib/libvirt
 BOOT_DIR=$BASE_DIR/boot

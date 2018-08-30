@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 Q_TY_of_VM=2
 VM_BASE=vm0
@@ -9,11 +9,11 @@ OS_VAR=ubuntu16.04
 USERNAME=jin
 #assume that id_rsa.pub generated
 #to be updated
-SSH_KEY=SSHKEY=`cat /home/$USERNAME/.ssh/id_rsa.pub`	
+SSH_KEY=`cat /home/$USERNAME/.ssh/id_rsa.pub`	
 IP_ADD_BASE=192.168.122.1
 BASE_DIR=/var/lib/libvirt
-BOOT_DIR=$BASE_DIR/boot/
-IMAGE_DIR=$BASE_DIR/images/
+BOOT_DIR=$BASE_DIR/boot
+IMAGE_DIR=$BASE_DIR/images
 
 createvm () {
 
@@ -71,7 +71,12 @@ if [ $? -eq 0];
 fi
 }
 
-for i in 1 to Q_TY_of_VM
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
+for i in 1 $Q_TY_of_VM
 do 
  mkdir -p $IMAGE_DIR/vm0$i
  createvm $i &>>/var/vm.err.log

@@ -1,6 +1,14 @@
 #!/bin/bash 
 
-#looks like finnaly working
+##############################################################################
+# Script created several VM (configurable)
+#
+# Should be started from root
+# Assuming that Guest OS is Ubuntu 16.04 and cloud image located in BOOT_DIR
+#
+# Tested with CentOS Linux release 7.4.1708 (Core) with installed KVM and virsh
+#
+##############################################################################
 
 Q_TY_of_VM=2
 VM_BASE=vm0
@@ -9,7 +17,7 @@ RAM=2048
 VCPU=1
 OS_VAR=ubuntu16.04
 USERNAME=jin
-#assume that id_rsa.pub generated
+#assuming that id_rsa.pub generated alredy
 #to be updated
 SSH_KEY=`cat /home/$USERNAME/.ssh/id_rsa.pub`	
 IP_ADD_BASE=192.168.122.1

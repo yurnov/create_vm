@@ -1,4 +1,6 @@
-#!/bin/bash -x
+#!/bin/bash 
+
+#looks like finnaly working
 
 Q_TY_of_VM=2
 VM_BASE=vm0
@@ -23,8 +25,7 @@ VM_NAME=$VM_BASE$1
 IP_ADD=$IP_ADD_BASE$1/24
 
 virsh list --all | grep $VM_NAME
-if [ $? -eq 0]; 
-	then
+if [ $? -eq 0 ]; then 
 		echo "VM" $1 "exist"
 	else
 		rm -f $IMAGE_DIR/$VM_NAME/*
@@ -46,7 +47,7 @@ if [ $? -eq 0];
 		echo "      shell: /bin/bash" >>  $IMAGE_DIR/$VM_NAME/user-data
 		echo "      sudo: ALL=(ALL) NOPASSWD:ALL">>  $IMAGE_DIR/$VM_NAME/user-data
 		echo "      ssh-authorized-keys:" >>  $IMAGE_DIR/$VM_NAME/user-data
-		echo "        - " $SSHKEY  >>  $IMAGE_DIR/$VM_NAME/user-data
+		echo "        - " $SSH_KEY  >>  $IMAGE_DIR/$VM_NAME/user-data
 		echo ""  >>  $IMAGE_DIR/$VM_NAME/user-data
 		echo "# network/interfaces"  >>  $IMAGE_DIR/$VM_NAME/user-data
 		echo "write_files: " >>  $IMAGE_DIR/$VM_NAME/user-data
@@ -60,6 +61,9 @@ if [ $? -eq 0];
 		echo "       dns-nameservers 192.168.122.1" >>  $IMAGE_DIR/$VM_NAME/user-data	#to be updated
 		echo "    path: /etc/network/interfaces" >>  $IMAGE_DIR/$VM_NAME/user-data		#to be updated
 		echo "" >>  $IMAGE_DIR/$VM_NAME/user-data
+		echo "    path: /etc/network/interfaces" >> $IMAGE_DIR/$VM_NAME/user-data	
+		echo "runcmd: " >> $IMAGE_DIR/$VM_NAME/user-data
+		echo "  - [ sudo, service, networking, restart ] " >> $IMAGE_DIR/$VM_NAME/user-data
 		cp $IMAGE_DIR/$VM_NAME/user-data ./
 		cp $IMAGE_DIR/$VM_NAME/meta-data ./
 		mkisofs -o  $IMAGE_DIR/$VM_NAME/$VM_NAME-cidata.iso -V cidata -J -r user-data meta-data
@@ -67,7 +71,7 @@ if [ $? -eq 0];
 		virt-resize --quiet --expand /dev/sda1 $IMAGE_DIR/$VM_NAME/$VM_NAME.img $IMAGE_DIR/$VM_NAME/$VM_NAME.new.image 
 		mv $IMAGE_DIR/$VM_NAME/$VM_NAME.new.image $IMAGE_DIR/$VM_NAME/$VM_NAME.img
 		virsh pool-create-as --name $VM_NAME --type dir --target $IMAGE_DIR/$VM_NAME/
-		virt-install --import --name $VM_NAME --memory $RAM --vcpus $VCPU --cpu host --disk $IMAGE_DIR/$VM_NAME/$VM_NAME.img,format=qcow2,bus=virtio --disk $IMAGE_DIR/$VM_NAME/$VM_NAME/-cidata.iso,device=cdrom --network bridge=virbr0,model=virtio --os-type=linux --os-variant=$OS_VAR --graphics spice --noautoconsole
+		virt-install --import --name $VM_NAME --memory $RAM --vcpus $VCPU --cpu host --disk $IMAGE_DIR/$VM_NAME/$VM_NAME.img,format=qcow2,bus=virtio --disk $IMAGE_DIR/$VM_NAME/$VM_NAME-cidata.iso,device=cdrom --network bridge=virbr0,model=virtio --os-type=linux --os-variant=$OS_VAR --graphics spice --noautoconsole
 fi
 }
 
@@ -80,7 +84,7 @@ for i in 1 $Q_TY_of_VM
 do 
  mkdir -p $IMAGE_DIR/vm0$i
  createvm $i &>>/var/vm.err.log
- sleep 90
+# sleep 90
 done 
 
 

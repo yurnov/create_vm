@@ -58,6 +58,7 @@ if [ $? -eq 0 ]; then
 		echo "      ssh-authorized-keys:" >>  $IMAGE_DIR/$VM_NAME/user-data
 		echo "        - " $SSH_KEY  >>  $IMAGE_DIR/$VM_NAME/user-data
 		echo ""  >>  $IMAGE_DIR/$VM_NAME/user-data
+		echo "packages: python" >>  $IMAGE_DIR/$VM_NAME/user-data
 		echo "# network/interfaces"  >>  $IMAGE_DIR/$VM_NAME/user-data
 		echo "write_files: " >>  $IMAGE_DIR/$VM_NAME/user-data
 		echo "  - content: |" >>  $IMAGE_DIR/$VM_NAME/user-data
